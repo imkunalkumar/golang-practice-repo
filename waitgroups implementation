@@ -1,0 +1,37 @@
+// Waitgroup implementation
+package main
+
+import (
+	"fmt"
+	"sync" // to import sync later on
+)
+
+type wg struct {
+	num int
+	m   sync.Mutex
+}
+
+func worker(i *wg) {
+	fmt.Println("worked")
+	defer i.Done()
+}
+func (i *wg) Add(num int) {
+	i.m.Lock()
+	i.num += num
+	i.m.Unlock()
+}
+func (i *wg) Done() {
+	i.m.Lock()
+	i.num--
+	i.m.Unlock()
+}
+func (i *wg) Wait() {
+	for i.num > 0 {
+	}
+}
+func main() {
+	var i wg
+	i.Add(1)
+	go worker(&i)
+	i.Wait()
+}

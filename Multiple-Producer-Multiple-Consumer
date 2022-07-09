@@ -1,0 +1,36 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var cha = make(chan int)
+var wg sync.WaitGroup
+
+//var done = make(chan bool)
+
+func main() {
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go write(i)
+	}
+	time.Sleep(time.Second * 2)
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go read()
+	}
+	wg.Wait()
+}
+func write(i int) {
+
+	cha <- i
+	wg.Done()
+}
+func read() {
+
+	fmt.Println(<-cha)
+	wg.Done()
+
+}
